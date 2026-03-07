@@ -14,7 +14,7 @@ PASS_SCORE = 32
 # -------------------------
 
 @st.cache_data
-def estrai_domande():
+def leggi_domande():
 
     domande = defaultdict(list)
 
@@ -99,28 +99,32 @@ def correggi_esame(esame, risposte):
 
 st.set_page_config(page_title="Simulatore Patentino", layout="wide")
 
-st.title("🌱 Simulatore Esame Patentino Fitosanitari per Utilizzatori")
+st.title("🌱 Simulatore Esame Regione Piemonte per Patentino Fitosanitario")
+st.subheader("Quesiti per utilizzatori")
 
-domande = estrai_domande()
+domande = leggi_domande()
 
 
 # -------------------------
 # GENERA ESAME
 # -------------------------
 
+# inizializzazione state
 if "esame" not in st.session_state:
+    st.session_state.esame = None
+    st.session_state.risposte = {}
 
-    if st.button("🎯 Genera nuovo esame"):
+if st.button("🎯 Genera nuovo esame"):
 
-        st.session_state.esame = genera_esame(domande)
-        st.session_state.risposte = {}
+    st.session_state.esame = genera_esame(domande)
+    st.session_state.risposte = {}
 
 
 # -------------------------
 # MOSTRA ESAME
 # -------------------------
 
-if "esame" in st.session_state:
+if st.session_state.esame:
 
     esame = st.session_state.esame
 
@@ -145,7 +149,7 @@ if "esame" in st.session_state:
     # CONSEGNA
     # -------------------------
 
-    if st.button("📨 Consegna esame"):
+    if st.button("✍️ Correzione esame"):
 
         punteggio, errori = correggi_esame(
             esame,
@@ -186,8 +190,3 @@ if "esame" in st.session_state:
 
         else:
             st.success("🎉 Tutte corrette!")
-
-
-        if st.button("🔁 Nuovo esame"):
-            st.session_state.clear()
-            st.rerun()
